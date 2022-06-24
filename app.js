@@ -2,13 +2,11 @@ require('dotenv').config({
   path: `${__dirname}/.env.local`
 })
 const express = require('express');
-const app = express();
+const { ApolloServer } = require('apollo-server-express');
 const PORT = 8008;
-const { graphqlHTTP } = require('express-graphql');
-const schema = require('./schemas');
+const {resolvers} = require('./resolvers/index');
 const mongo = require('./config/mongo');
-
-app.use(express.json());
+const { typeDefs } = require('./typeDefs/index');
 
 (async () => {
   try{
@@ -20,11 +18,21 @@ app.use(express.json());
   console.log('Mongodb connection completed');
 })()
 
-app.use('/graphql',graphqlHTTP({
-    schema,
-    graphiql: true
-}));
+const startApolloServer = async ( typeDefs, resolvers) => {
+  
+  const server = new ApolloServer({typeDefs, resolvers})
+  const app = express();
 
-app.listen(PORT, () => {
-  console.log("Server running on", PORT);
-});
+  await server.start();
+  server.applyMiddleware({app, path: '/graphql'});
+  
+  app.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}${server.graphqlPath}`);
+  });
+
+}
+
+startApolloServer(typeDefs, resolvers);
+
+
+
