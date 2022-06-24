@@ -19,6 +19,7 @@ app.use(express.json());
   }
   console.log('Mongodb connection completed');
 })()
+
 app.use('/graphql',graphqlHTTP({
     schema,
     graphiql: true

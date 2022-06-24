@@ -1,8 +1,6 @@
 const graphql = require('graphql');
 const UserType = require('./typeDefs/UserType');
-
-const userData =  require('../mockdata.json');
-
+const { insertUser, getUsers } = require('../models/users');
 const { GraphQLObjectType, GraphQLString, GraphQLInt, GraphQLSchema, GraphQLList } = graphql;
 
 const RootQuery = new GraphQLObjectType({
@@ -12,11 +10,12 @@ const RootQuery = new GraphQLObjectType({
           type: new GraphQLList(UserType),
           args: { id: {type: GraphQLInt}},
           resolve(parent, args) {
-            return userData
+            return getUsers('users');
           }
         }
     }
 });
+
 
 const Mutation = new GraphQLObjectType({
   name:"Mutation",
@@ -29,7 +28,7 @@ const Mutation = new GraphQLObjectType({
         email:{type: GraphQLString},
       },
      resolve(parent, args) {
-      userData.push({id: userData.length+1, name: args.name, username: args.username, email: args.email})
+      return insertUser(args, 'users')
      }
    }
   }

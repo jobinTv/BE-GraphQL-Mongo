@@ -8,7 +8,6 @@ const state = {client: null};
 
 exports.connect = async () => {
     try{
-        console.log('hiii')
         state.client = await client.connect();
     }
     catch (e){
