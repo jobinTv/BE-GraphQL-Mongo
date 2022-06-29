@@ -2,7 +2,7 @@ const { insertUser, getUsers } = require('../models/users');
 
 const resolvers = {
     Query: {
-        getAllUsers() {
+        users() {
             return getUsers('users');
         }
     },
